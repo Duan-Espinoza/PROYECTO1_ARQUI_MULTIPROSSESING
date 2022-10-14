@@ -5,3 +5,5 @@ https://www.anyscale.com/blog/writing-your-first-distributed-python-application-
 https://docs.python.org/3/
 
 https://www.youtube.com/watch?v=nnlAH1zDBDE&ab_channel=TheCodingTrain
+
+https://cs231n.github.io/python-numpy-tutorial/
