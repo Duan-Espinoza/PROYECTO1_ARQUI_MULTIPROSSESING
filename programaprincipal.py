@@ -2,6 +2,7 @@
 #Estudiantes:
 #Duan Antonio Espinoza
 #Josue Daniel Chaves Araya
+#Valentin Tissera Doncini
 #Profesor: Luis Diego Gomez Rodriguez
 #Collage de imagenes
 

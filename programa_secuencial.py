@@ -31,6 +31,9 @@ def rutasCarpetaImagenes():
 #S:
 #R:
 def cargaImagenes():
+    """
+
+    """
     # ruta=input("Escriba la ruta de la carpeta con las imágenes:")
     ruta = rutasCarpetaImagenes()
 
@@ -47,11 +50,23 @@ def cargaImagenes():
         
         return cambioTamannoImg(directorio,ruta)
 
-#Función que verifica la existencia de un directorio
-#E: String
-#S: Valor booleano
-#R: ...................
+
 def verificarRuta(ruta):
+    """Verifica la existencia de un directorio
+    Si el directorio no es encontrado retorna falso
+
+    Parameters
+    ----------
+    ruta : str
+        Ruta la cual se va a verificar su validez.
+
+    Return
+    ----------
+    Valor booleano
+        True: Si encuentra la ruta
+        False: Si no la encuentra.
+
+    """
     print("------ Verificando Path")
 
     if os.path.exists(ruta):
@@ -59,11 +74,18 @@ def verificarRuta(ruta):
     else:
         return False
 
-#Función que cambia el tamaño de las imagenes 
-#E directorio: [] Lista de nombres de las imagenes del folder
-#E ruta: string Path del directorio 
-#S
+
 def cambioTamannoImg(directorio,ruta):
+    """Cambia el tamaño de las imagenes 
+
+    Parameters
+    ----------
+    directorio: List
+        Lista de nombres de las imagenes del folder
+    ruta : str
+        Ruta la cual se va a verificar su validez.
+
+    """
     print("------ Cambiando el size de las imagenes")
     listaImagenes=[]
     for x in directorio:
@@ -75,12 +97,15 @@ def cambioTamannoImg(directorio,ruta):
     return valorRGB(listaImagenes)
 
 
-
-
-# Calcula el valor promedio RGB de cada imagen 
-#E lista: diccionario Lista de diccionario con información de cada imágen 
-#
 def valorRGB(lista):
+    """Calcula el valor promedio RGB de cada imagen 
+
+    Parameters
+    ----------
+    lista: Dictionary[:]
+        Diccionario con información de cada imágen 
+
+    """
     print("------ Calculando el Promedio RGB")
     diccionarioImagenes = {}
 
@@ -111,10 +136,14 @@ def valorRGB(lista):
     return realizarCollageImg(diccionarioImagenes)
 
 
-#
-#
-#
 def realizarCollageImg(diccionarioImagenes):
+    """
+
+    Parameters
+    ----------
+    
+
+    """
   print("------ Realizando el Collage")
   print(diccionarioImagenes)
 
