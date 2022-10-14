@@ -3,3 +3,5 @@ https://pypi.org/project/ray/
 https://www.anyscale.com/blog/writing-your-first-distributed-python-application-with-ray
 
 https://docs.python.org/3/
+
+https://www.youtube.com/watch?v=nnlAH1zDBDE&ab_channel=TheCodingTrain
