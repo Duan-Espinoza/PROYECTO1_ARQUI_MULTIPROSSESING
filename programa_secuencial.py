@@ -76,13 +76,13 @@ def cambioTamannoImg(directorio,ruta):
 
 
 
-diccionarioImagenes = ""
 
 # Calcula el valor promedio RGB de cada imagen 
 #E lista: diccionario Lista de diccionario con información de cada imágen 
 #
 def valorRGB(lista):
     print("------ Calculando el Promedio RGB")
+    diccionarioImagenes = {}
 
     for x in lista:
         arr = np.array(x['imagen']) # Vamos a convertir la imagen en un arreglo
@@ -92,22 +92,37 @@ def valorRGB(lista):
         if(arr.ndim != 3):
             nombreImagen = x['nombre']
             print(f'Imagen {nombreImagen} tiene {arr.ndim} dimensiones, el shape es: {arr.shape}, el promedio RGB es de {arr_mean}')
+      
+            rgb = f'{int(arr_mean)},{int(arr_mean)},{int(arr_mean)}'
+            diccionarioImagenes[rgb] = x['imagen']
+
             #Muestra la Imagen 
             # plt.imshow(x['imagen'])
             # plt.show()
             #x['imagen'].show()
+
         else:
-            print(f'[R={arr_mean[0]:.1f},  G={arr_mean[1]:.1f}, B={arr_mean[2]:.1f} ]')
+            print(f'[R={int(arr_mean[0])},  G={int(arr_mean[1])}, B={int(arr_mean[2])} ]')
+            # El valor RGB
+            rgb = f'{int(arr_mean[0])},{int(arr_mean[1])},{int(arr_mean[2])}'
+            diccionarioImagenes[rgb] = x['imagen']
 
+    print("------ Imprimiendo el diccionario")
+    return realizarCollageImg(diccionarioImagenes)
 
-def valorPromedioImg():
-    pass
 
 #
 #
 #
-def realizarCollageImg():
-    pass
+def realizarCollageImg(diccionarioImagenes):
+  print("------ Realizando el Collage")
+  print(diccionarioImagenes)
+
+  
+
+
+
+  pass
 
 
 
