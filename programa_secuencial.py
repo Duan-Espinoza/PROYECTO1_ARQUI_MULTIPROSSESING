@@ -6,36 +6,30 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 
-def rutasCarpetaImagenes():
-    print("*****Elija la Ruta ******")
-    print("1. Duan ")
-    print("2. Josue ")
-    print("3. Valen ")
-    try:
-        opcion=int(input("Digite su opcion:"))
-    except:
-        print("Opción no válida\n")
-        return rutasCarpetaImagenes()
-    if opcion==1:
-        return r'C:\Users\Usuario\Desktop\8 semestre\Arquitectura computadores\Proyecto 1\Fotomosaico\PROYECTO1_ARQUI_MULTIPROSSESING\imgs'
-    if opcion==2:
-        return r'/Users/d4n11083/Desktop/Repositorios/PROYECTO1_ARQUI_MULTIPROSSESING/imgs'
-        #return r'/Users/gilda/Desktop/Repositorios/Proyecto_1_Arqui/PROYECTO1_ARQUI_MULTIPROSSESING/imgs'
-    if opcion==3:
-        pass
-    else:
-        print("Opción no válida")
-        return rutasCarpetaImagenes()
+
+pathImagenes = os.path.join(os.getcwd(), "imgs")
+pathImagenesBase = os.path.join(os.getcwd(), "Imagenes_base")
+pathResultado = os.path.join(os.getcwd(), "resultado")
+
+
+def Secuencial():
+    directorioImagenes  = cargaImagenes(pathImagenes)
+    imagenesModificadas = cambioTamannoImg(directorioImagenes, pathImagenes)
+    diccionarioRGB = valorRGB(imagenesModificadas)
+
+    realizarCollageImg(diccionarioRGB, pathImagenesBase, pathResultado)
+
 
 #E:
 #S:
 #R:
-def cargaImagenes():
+def cargaImagenes(pathCarpeta):
     """
 
     """
-    # ruta=input("Escriba la ruta de la carpeta con las imágenes:")
-    ruta = rutasCarpetaImagenes()
+    print("------ Cargando Lista de Imagenes")
+
+    ruta = pathCarpeta
 
     if verificarRuta(ruta)==False:
         print("Ruta no válida")
@@ -48,7 +42,7 @@ def cargaImagenes():
                 
         print(f'Hay {len(directorio)} imagenes en la carpeta')
         
-        return cambioTamannoImg(directorio,ruta)
+        return directorio
 
 
 def verificarRuta(ruta):
@@ -84,7 +78,6 @@ def cambioTamannoImg(directorio,ruta):
         Lista de nombres de las imagenes del folder
     ruta : str
         Ruta la cual se va a verificar su validez.
-
     """
     print("------ Cambiando el size de las imagenes")
     listaImagenes=[]
@@ -94,7 +87,8 @@ def cambioTamannoImg(directorio,ruta):
         im1 = {'imagen':im.resize(newsize), 'nombre':x, 'promRGB':0}
 
         listaImagenes.append(im1)
-    return valorRGB(listaImagenes)
+
+    return listaImagenes
 
 
 def valorRGB(lista):
@@ -104,7 +98,6 @@ def valorRGB(lista):
     ----------
     lista: Dictionary[:]
         Diccionario con información de cada imágen 
-
     """
     print("------ Calculando el Promedio RGB")
     diccionarioImagenes = {}
@@ -116,8 +109,7 @@ def valorRGB(lista):
 
         if(arr.ndim != 3):
             nombreImagen = x['nombre']
-            print(f'Imagen {nombreImagen} tiene {arr.ndim} dimensiones, el shape es: {arr.shape}, el promedio RGB es de {arr_mean}')
-      
+            #print(f'Imagen {nombreImagen} tiene {arr.ndim} dimensiones, el shape es: {arr.shape}, el promedio RGB es de {arr_mean}')
             rgb = f'{int(arr_mean)},{int(arr_mean)},{int(arr_mean)}'
             diccionarioImagenes[rgb] = x['imagen']
 
@@ -127,31 +119,61 @@ def valorRGB(lista):
             #x['imagen'].show()
 
         else:
-            print(f'[R={int(arr_mean[0])},  G={int(arr_mean[1])}, B={int(arr_mean[2])} ]')
+
+            # print(f'[R={int(arr_mean[0])},  G={int(arr_mean[1])}, B={int(arr_mean[2])} ]')
             # El valor RGB
             rgb = f'{int(arr_mean[0])},{int(arr_mean[1])},{int(arr_mean[2])}'
             diccionarioImagenes[rgb] = x['imagen']
 
-    print("------ Imprimiendo el diccionario")
-    return realizarCollageImg(diccionarioImagenes)
+    #print("------ Imprimiendo el diccionario")
+    return diccionarioImagenes
 
+def menuSeleccionImagenBase( listaImagenes ):
+    print("*****Seleccione la Imagen a procesar******\n")
 
-def realizarCollageImg(diccionarioImagenes):
+    for iterador, imagen in enumerate(listaImagenes):
+        print(f'Opcion {iterador + 1}: {imagen}')
+
+    print(" ")        
+    try:
+        opcion=int(input("Digite su opcion:"))
+    except:
+        print("Opción no válida\n")
+        return menuSeleccionImagenBase(listaImagenes)
+
+    if ( opcion > 0 and opcion <= len(listaImagenes)):
+        print(f'Imagen {opcion} seleccionada')
+        return (listaImagenes[opcion - 1 ])
+    else:
+        print("Opción no válida")
+        return menuSeleccionImagenBase(listaImagenes)
+   
+
+def realizarCollageImg(diccionarioImagenes, pathImagenesBase, pathResultado):
     """
 
     Parameters
     ----------
-    
 
     """
-  print("------ Realizando el Collage")
-  print(diccionarioImagenes)
+    print("------ Realizando el Collage")
 
-  
+    imagenesBase = cargaImagenes(pathImagenesBase)
+    imagenSeleccionada = menuSeleccionImagenBase(imagenesBase)
+
+    img = Image.open(os.path.join(pathImagenesBase, imagenSeleccionada),"r")
+
+    #Crear Canvas
+    #Leer Pixel por pixel y sacar el valor RGB
+    #Buscar el RGB en el diccionario y que me de la imagen asociada
+    #Pintar en el canvas la imagen que equivale a ese pixel en esa posición 
+
+    
 
 
+    
 
-  pass
+    pass
 
 
 

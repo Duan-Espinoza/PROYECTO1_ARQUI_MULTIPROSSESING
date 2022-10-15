@@ -28,7 +28,7 @@ def menuPrincipal():
         print("Opción no válida\n")
         return menuPrincipal()
     if opcion==1:
-        return secuencial.cargaImagenes()
+        return secuencial.Secuencial()
     if opcion==2:
         return paralelo.hello()
         pass
