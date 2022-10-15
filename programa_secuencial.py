@@ -1,3 +1,4 @@
+from configparser import DuplicateSectionError
 from operator import truediv
 import os
 from PIL import Image
@@ -10,6 +11,7 @@ import time
 pathImagenes = os.path.join(os.getcwd(), "imgs")
 pathImagenesBase = os.path.join(os.getcwd(), "Imagenes_base")
 pathResultado = os.path.join(os.getcwd(), "resultado")
+newSize = 15
 
 
 def Secuencial():
@@ -83,7 +85,7 @@ def cambioTamannoImg(directorio,ruta):
     listaImagenes=[]
     for x in directorio:
         im = Image.open(os.path.join(ruta, x),"r")
-        newsize = (15, 15)
+        newsize = (newSize, newSize)
         im1 = {'imagen':im.resize(newsize), 'nombre':x, 'promRGB':0}
 
         listaImagenes.append(im1)
@@ -110,6 +112,8 @@ def valorRGB(lista):
         if(arr.ndim != 3):
             nombreImagen = x['nombre']
             #print(f'Imagen {nombreImagen} tiene {arr.ndim} dimensiones, el shape es: {arr.shape}, el promedio RGB es de {arr_mean}')
+            # {'128,250,74':<imagen>, '123,345,432':<imagen2>, }
+
             rgb = f'{int(arr_mean)},{int(arr_mean)},{int(arr_mean)}'
             diccionarioImagenes[rgb] = x['imagen']
 
@@ -161,14 +165,43 @@ def realizarCollageImg(diccionarioImagenes, pathImagenesBase, pathResultado):
     imagenesBase = cargaImagenes(pathImagenesBase)
     imagenSeleccionada = menuSeleccionImagenBase(imagenesBase)
 
+    #Imagen Base
     img = Image.open(os.path.join(pathImagenesBase, imagenSeleccionada),"r")
+    imgWidth, imgHeight = img.size
+
+    #Creacion del canvas 
+    #Si la imagen original es de 20 x 20 y cada imagen chiquitica es de 15x15 el nuevo size del canvas
+    # va a ser width(20*15) x height(20x15)
+    im_bg = Image.new(mode="RGB", size=(imgWidth*newSize, imgHeight*newSize))
+
+    pixel = img.load()
+    # Va columan por columna, de arriba hacia abajo, empezando con la columna de la izquiera de la img
+    for x in range(img.width):
+        for y in range(img.height):
+            color = pixel[x, y]
+            # print( f'R:{color[0]}, G:{color[1]}, B{color[2]}')
+            newKeyRGB = f'{color[0]},{color[1]},{color[2]}'
+
+            #diccionario tiene= '12,12,12' osea 'r,g,b'
+            #print(diccionarioImagenes[newKeyRGB])
+            print("Imprimir Keys del diccionario")
+            for valor in diccionarioImagenes:
+                print(valor) #Imprime el key 
+                print(diccionarioImagenes['10,14,62']) #Imprime el valor de ese key 
+                
+            promedio = color[0] + color[1] + color[2]
+
+            # promedio = promedio // 3
+            # pixel[x, y] = (promedio, promedio, promedio)
+    return img
+
 
     #Crear Canvas
     #Leer Pixel por pixel y sacar el valor RGB
     #Buscar el RGB en el diccionario y que me de la imagen asociada
     #Pintar en el canvas la imagen que equivale a ese pixel en esa posición 
 
-    
+
 
 
     
