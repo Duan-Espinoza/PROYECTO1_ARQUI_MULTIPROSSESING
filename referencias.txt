@@ -7,3 +7,7 @@ https://docs.python.org/3/
 https://www.youtube.com/watch?v=nnlAH1zDBDE&ab_channel=TheCodingTrain
 
 https://cs231n.github.io/python-numpy-tutorial/
+
+
+La progra del profe en COLAB
+https://colab.research.google.com/drive/1DdAsPGFGwO-f_1Hn3C5TBoB5_lU4EcjQ?usp=sharing#scrollTo=LbuBwlmP_9Mm
