@@ -27,9 +27,6 @@ def rutasCarpetaImagenes():
         print("Opción no válida")
         return rutasCarpetaImagenes()
 
-#E:
-#S:
-#R:
 def cargaImagenes():
     """
 
