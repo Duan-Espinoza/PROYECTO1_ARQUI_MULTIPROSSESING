@@ -1,5 +1,5 @@
-from configparser import DuplicateSectionError
-from operator import truediv
+
+
 import os
 from PIL import Image
 import multiprocessing as mp
@@ -11,14 +11,13 @@ import time
 pathImagenes = os.path.join(os.getcwd(), "imgs")
 pathImagenesBase = os.path.join(os.getcwd(), "Imagenes_base")
 pathResultado = os.path.join(os.getcwd(), "resultado")
-newSize = 15
+newSize = 30
 
 
 def Secuencial():
     directorioImagenes  = cargaImagenes(pathImagenes)
     imagenesModificadas = cambioTamannoImg(directorioImagenes, pathImagenes)
     diccionarioRGB = valorRGB(imagenesModificadas)
-
     realizarCollageImg(diccionarioRGB, pathImagenesBase, pathResultado)
 
 
@@ -92,6 +91,8 @@ def cambioTamannoImg(directorio,ruta):
 
     return listaImagenes
 
+diccionarioImagenes = {}
+diccionarioPromedios = {}
 
 def valorRGB(lista):
     """Calcula el valor promedio RGB de cada imagen 
@@ -102,7 +103,7 @@ def valorRGB(lista):
         Diccionario con información de cada imágen 
     """
     print("------ Calculando el Promedio RGB")
-    diccionarioImagenes = {}
+
 
     for x in lista:
         arr = np.array(x['imagen']) # Vamos a convertir la imagen en un arreglo
@@ -112,22 +113,40 @@ def valorRGB(lista):
         if(arr.ndim != 3):
             nombreImagen = x['nombre']
             #print(f'Imagen {nombreImagen} tiene {arr.ndim} dimensiones, el shape es: {arr.shape}, el promedio RGB es de {arr_mean}')
+
             # {'128,250,74':<imagen>, '123,345,432':<imagen2>, }
 
-            rgb = f'{int(arr_mean)},{int(arr_mean)},{int(arr_mean)}'
+            # {'128,250,74':<imagen>, '123,345,432':<imagen2>, }
+            # [12825074, 123345432, 886878687, 98168761847]
+
+            rgb = f'{int(arr_mean)}{int(arr_mean)}{int(arr_mean)}'
+
+            "255255255"
+            
+            
+            listaRGB = [arr_mean,arr_mean,arr_mean]
+
             diccionarioImagenes[rgb] = x['imagen']
+            diccionarioPromedios[rgb] = listaRGB
 
             #Muestra la Imagen 
             # plt.imshow(x['imagen'])
             # plt.show()
             #x['imagen'].show()
-
         else:
 
             # print(f'[R={int(arr_mean[0])},  G={int(arr_mean[1])}, B={int(arr_mean[2])} ]')
             # El valor RGB
-            rgb = f'{int(arr_mean[0])},{int(arr_mean[1])},{int(arr_mean[2])}'
+            
+
+            rgb = f'{int(arr_mean[0])}{int(arr_mean[1])}{int(arr_mean[2])}'
+
+            listaRGB = [int(arr_mean[0]), int(arr_mean[1]),int(arr_mean[2])]
+
+            diccionarioPromedios[rgb] = listaRGB
             diccionarioImagenes[rgb] = x['imagen']
+
+
 
     #print("------ Imprimiendo el diccionario")
     return diccionarioImagenes
@@ -170,47 +189,69 @@ def realizarCollageImg(diccionarioImagenes, pathImagenesBase, pathResultado):
     imgWidth, imgHeight = img.size
 
     #Creacion del canvas 
-    #Si la imagen original es de 20 x 20 y cada imagen chiquitica es de 15x15 el nuevo size del canvas
+    #Si la imagen base es de 20 x 20 y cada imagen chiquitica es de 15x15 el nuevo size del canvas
     # va a ser width(20*15) x height(20x15)
     im_bg = Image.new(mode="RGB", size=(imgWidth*newSize, imgHeight*newSize))
 
     pixel = img.load()
+    res = []
+
     # Va columan por columna, de arriba hacia abajo, empezando con la columna de la izquiera de la img
     for x in range(img.width):
         for y in range(img.height):
             color = pixel[x, y]
             # print( f'R:{color[0]}, G:{color[1]}, B{color[2]}')
-            newKeyRGB = f'{color[0]},{color[1]},{color[2]}'
 
+            key = buscarPixel(color)
+            
+            # diccionarioImagenes[key].show()
+
+            
+            im_bg.paste(diccionarioImagenes[key], (x*newSize, y*newSize) )
+            
+            
+            # newKeyRGB = f'{color[0]},{color[1]},{color[2]}'
+            # newKeyRGB = f'{prom}'
             #diccionario tiene= '12,12,12' osea 'r,g,b'
             #print(diccionarioImagenes[newKeyRGB])
-            print("Imprimir Keys del diccionario")
-            for valor in diccionarioImagenes:
-                print(valor) #Imprime el key 
-                print(diccionarioImagenes['10,14,62']) #Imprime el valor de ese key 
+
+
                 
-            promedio = color[0] + color[1] + color[2]
+            # promedio = color[0] + color[1] + color[2]
 
             # promedio = promedio // 3
             # pixel[x, y] = (promedio, promedio, promedio)
-    return img
+    print(res)
+    im_bg.show()
 
 
-    #Crear Canvas
-    #Leer Pixel por pixel y sacar el valor RGB
-    #Buscar el RGB en el diccionario y que me de la imagen asociada
-    #Pintar en el canvas la imagen que equivale a ese pixel en esa posición 
-
-
-
-
+def buscarPixel(pixel):
     
+    R = pixel[0]
+    G = pixel[1]
+    B = pixel[2]
 
-    pass
+    keyMenor = ""
+    promMenor = 0
 
+    for key, value  in diccionarioPromedios.items():
+        
+        prom = (abs(value[0] - R) + abs(value[1] - G) + abs(value[2] - B))//3
 
+        if (keyMenor == ""):
+            keyMenor = key
+            promMenor = prom
 
-
+        if prom < promMenor:
+            promMenor = prom 
+            keyMenor = key
     
-    
+    return keyMenor
+
+        
+
+
+
+
+        
     
