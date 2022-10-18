@@ -11,7 +11,7 @@ import time
 pathImagenes = os.path.join(os.getcwd(), "imgs")
 pathImagenesBase = os.path.join(os.getcwd(), "Imagenes_base")
 pathResultado = os.path.join(os.getcwd(), "resultado")
-newSize = 30
+newSize = 50
 
 
 def Secuencial():
