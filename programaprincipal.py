@@ -11,13 +11,23 @@
 import programa_paralelo as paralelo
 import programa_secuencial as secuencial
 
-
-#Descripción: Serie de prints que muestran las opciones disponibles
-#del menú principal
-#E: Digito
-#S: Menu seleccionado
-#R: Solo valor numérico entero
 def menuPrincipal():
+    """Serie de prints que muestran las opciones disponibles del menu
+
+    Input
+    ----------
+    Digito de entrada,para determinar cual opcion se eligio
+
+    Out
+    ----------
+    Menu seleccionado
+    
+    Restrictions
+    ----------
+    Solo valor numérico entero
+
+
+    """
     print("*****Collage de imagenes******\n")
     print("Opcion 1: Algoritmo Secuencial")
     print("Opcion 2: Algoritmo Paralelo")

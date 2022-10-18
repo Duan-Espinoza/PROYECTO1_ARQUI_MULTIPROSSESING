@@ -21,10 +21,7 @@ def Secuencial():
     realizarCollageImg(diccionarioRGB, pathImagenesBase, pathResultado)
 
 
-#E:
-#S:
-#R:
-def cargaImagenes(pathCarpeta):
+def cargaImagenes(pathCarpeta):    
     """
 
     """
