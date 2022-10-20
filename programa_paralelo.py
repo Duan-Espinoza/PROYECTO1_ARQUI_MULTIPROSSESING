@@ -1,7 +1,6 @@
 
 import os
 from PIL import Image
-# impport multiprocessing as mp
 import numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -91,7 +90,7 @@ def cambioTamanioImg(directorio,ruta):
 def tiempo():
   inicio = time.time()
   directorioImagenes = cargaImagenes(pathImagenes)
-  cambioTamanioImg(directorioImagenes, pathImagenes)
+  = cambioTamanioImg(directorioImagenes, pathImagenes)
   print("Duración: ", time.time() - inicio)
 
 tiempo()
