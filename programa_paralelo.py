@@ -35,22 +35,14 @@ def Paralelo():
 
 
     print("Realizando el Collage Paralelo")
-    imagenesBase = cargaImagenes(pathImagenesBase)
-    imagenSeleccionada = menuSeleccionImagenBase(imagenesBase)
-
-    img = Image.open(os.path.join(pathImagenesBase, imagenSeleccionada),"r")
-    imgWidth, imgHeight = img.size
-    imgBackground = Image.new(mode="RGB", size=(imgWidth*newSize, imgHeight*newSize))
-
     inicio = time.time()
-    
-    result = realizarCollageImagenParalelo( diccionarioRGB, diccionarioPromedios, img, imgBackground,imgWidth,imgHeight )
+    result = realizarCollageImg(diccionarioImagenes, pathImagenesBase, pathResultado)
     print("Duración Collage: ", time.time() - inicio)
 
 
     pathREsultado = os.path.join(os.getcwd(), "resultado/resultado.jpg") 
     print(pathREsultado)
-    imgBackground.save( pathREsultado )
+    result.save( pathREsultado )
     # resultado.show()
 
 
@@ -203,7 +195,7 @@ def menuSeleccionImagenBase( listaImagenes ):
         print("Opción no válida")
         return menuSeleccionImagenBase(listaImagenes)
 
-def buscarPixel(pixel, diccionarioPromediosP):
+def buscarPixel(pixel):
     time.sleep(0.000001)
 
     R = pixel[0]
@@ -213,7 +205,7 @@ def buscarPixel(pixel, diccionarioPromediosP):
     keyMenor = ""
     promMenor = 0
 
-    for key, value  in diccionarioPromediosP.items():
+    for key, value  in diccionarioPromedios.items():
         
         prom = (abs(value[0] - R) + abs(value[1] - G) + abs(value[2] - B))//3
 
@@ -227,38 +219,83 @@ def buscarPixel(pixel, diccionarioPromediosP):
     time.sleep(0.000001)
     return keyMenor
 
+
 @ray.remote
-def realizarCollageImg(pixels, imgBackground,diccionarioImagenes, diccionarioPromediosP, col, height):
-    time.sleep(0.000001)
+def collageParalelo(pixel,x,height,background):
+    for y in range(height):
+            color = pixel[x, y]
+            key = buscarPixel(color[y])
+            background.paste(diccionarioImagenes[key], (x*newSize, y*newSize) )
+
+
+
+def realizarCollageImg(diccionarioImagenes, pathImagenesBase, pathResultado):
+    """
+
+    Parameters
+    ----------
+
+    """
+    print("------ Realizando el Collage")
+
+    imagenesBase = cargaImagenes(pathImagenesBase)
+    imagenSeleccionada = menuSeleccionImagenBase(imagenesBase)
+
+    #Imagen Base
+    img = Image.open(os.path.join(pathImagenesBase, imagenSeleccionada),"r")
+    imgWidth, imgHeight = img.size
+
+    im_bg = Image.new(mode="RGB", size=(imgWidth*newSize, imgHeight*newSize))
+
+    pixel = img.load() 
+
     # Va columan por columna, de arriba hacia abajo, empezando con la columna de la izquiera de la img
 
-    for y in range(height):
-        color = pixels[col, y]
-        key = buscarPixel(color, diccionarioPromediosP)
-        imgBackground.paste(diccionarioImagenes[key], (col*newSize, y*newSize) )
-    time.sleep(0.000001)
-    return 
+    bgId = ray.put(im_bg)
+    pixel = ray.put(np.asarray(img))
+    task_ids = [collageParalelo.remote(pixel, x, imgHeight,bgId ) for x in range(imgWidth)]
+    im_bg.show()
+
+    return im_bg
 
 
-def realizarCollageImagenParalelo( diccionarioImagenes, diccionarioPromediosP, imagen, background, imgWidth, imgHeight):
-    # print("Realizando el Collage Paralelo")
-    # imagenesBase = cargaImagenes(pathImagenesBase)
-    # imagenSeleccionada = menuSeleccionImagenBase(imagenesBase)
 
-    # img = Image.open(os.path.join(pathImagenesBase, imagenSeleccionada),"r")
-    # imgWidth, imgHeight = img.size
-    # imgBackground = Image.new(mode="RGB", size=(imgWidth*newSize, imgHeight*newSize))
+# def realizarCollageImg(pixels, imgBackground,diccionarioImagenes, diccionarioPromediosP, col, height):
+#     time.sleep(0.000001)
+#     # Va columan por columna, de arriba hacia abajo, empezando con la columna de la izquiera de la img
+
+#     for y in range(height):
+#         color = pixels[col, y]
+#         key = buscarPixel(color, diccionarioPromediosP)
+#         imgBackground.paste(diccionarioImagenes[key], (col*newSize, y*newSize) )
+#     time.sleep(0.000001)
+#     return 
+
+
+# def realizarCollageImagenParalelo( diccionarioImagenes, diccionarioPromediosP, pathImagenesBase,):
+
+#     print("Realizando el Collage Paralelo")
+#     imagenesBase = cargaImagenes(pathImagenesBase)
+#     imagenSeleccionada = menuSeleccionImagenBase(imagenesBase)
+
+#     img = Image.open(os.path.join(pathImagenesBase, imagenSeleccionada),"r")
+#     imgWidth, imgHeight = img.size
+#     imgBackground = Image.new(mode="RGB", size=(imgWidth*newSize, imgHeight*newSize))
     
-    time.sleep(0.000001)
-    pixelsId = ray.put(np.asarray(imagen))
-    imgBackgroundId = ray.put(background)
-    diccionarioImagenesId = ray.put(diccionarioImagenes)
-    diccionarioPromediosPId = ray.put(diccionarioPromediosP)
+#     time.sleep(0.000001)
+#     pixelsId = ray.put(np.asarray(img))
+#     imgBackgroundId = ray.put(imgBackground)
+#     diccionarioImagenesId = ray.put(diccionarioImagenes)
+#     diccionarioPromediosPId = ray.put(diccionarioPromediosP)
     
-    start = time.time()
-    result_ids = [realizarCollageImg.remote(pixelsId,imgBackgroundId,diccionarioImagenesId, diccionarioPromediosPId, x, imgHeight ) for x in range(imgWidth)]
+#     result_ids = [realizarCollageImg.remote(pixelsId,imgBackgroundId,diccionarioImagenesId, diccionarioPromediosPId, x, imgHeight ) for x in range(imgWidth)]
+#     #results = ray.get(result_ids)
 
-    return 0
+#     ray.shutdown()
+
+#     print("Holi")
+
+#     return imgBackground
 
     
 
