@@ -13,10 +13,30 @@ newSize = 50
 
 
 def Paralelo():
+    inicio = time.time()
     directorioImagenes  = cargaImagenes(pathImagenes)
+    print("Duración Carga Imagenes: ", time.time() - inicio)
+
+    inicio = time.time()
     imagenesModificadas = cambioTamanioImgParalelo(directorioImagenes, pathImagenes)
-    diccionarioRGB = valorRGBParalelizado(imagenesModificadas)
-    realizarCollageImg(diccionarioRGB, pathImagenesBase, pathResultado)
+    print("Duración Cambio de Tamaño: ", time.time() - inicio)
+
+    inicio = time.time()
+    diccionarioImgRGB, diccionarioPromRgb  = valorRGBParalelizado(imagenesModificadas)
+    print("Duración Cambio Promedio RGB: ", time.time() - inicio)
+    #Realizar Collage
+
+
+    print("Realizando el Collage Paralelo")
+    inicio = time.time()
+    result = realizarCollageImg(diccionarioImgRGB, pathImagenesBase, diccionarioPromRgb)
+    print("Duración Collage: ", time.time() - inicio)
+
+
+    pathREsultado = os.path.join(os.getcwd(), "resultado/resultado.jpg") 
+    print(pathREsultado)
+    result.save( pathREsultado )
+    ray.shutdown()
 
 
 def verificarRuta(ruta):
