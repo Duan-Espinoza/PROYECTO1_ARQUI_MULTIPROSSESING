@@ -28,6 +28,7 @@ def menuPrincipal():
 
 
     """
+    return paralelo.Paralelo()
     print("*****Collage de imagenes******\n")
     print("Opcion 1: Algoritmo Secuencial")
     print("Opcion 2: Algoritmo Paralelo")
