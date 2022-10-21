@@ -142,9 +142,6 @@ def valorRGB(lista):
 
             diccionarioPromedios[rgb] = listaRGB
             diccionarioImagenes[rgb] = x['imagen']
-
-
-
     #print("------ Imprimiendo el diccionario")
     return diccionarioImagenes
 
@@ -190,7 +187,7 @@ def realizarCollageImg(diccionarioImagenes, pathImagenesBase, pathResultado):
     # va a ser width(20*15) x height(20x15)
     im_bg = Image.new(mode="RGB", size=(imgWidth*newSize, imgHeight*newSize))
 
-    pixel = img.load()
+    pixel = img.load() 
     res = []
 
     # Va columan por columna, de arriba hacia abajo, empezando con la columna de la izquiera de la img
