@@ -22,11 +22,11 @@ def Paralelo():
     print("Duración Cambio de Tamaño: ", time.time() - inicio)
 
     inicio = time.time()
-    diccionarioImgRGB, diccionarioPromRgb  = valorRGBParalelizado(imagenesModificadas)
+    diccionarioPromRgb ,diccionarioImgRGB = valorRGBParalelizado(imagenesModificadas)
     print("Duración Cambio Promedio RGB: ", time.time() - inicio)
     #Realizar Collage
 
-
+    print("diccionario RGB: "+(str(len(diccionarioImgRGB)-1)))
     print("Realizando el Collage Paralelo")
     inicio = time.time()
     result = realizarCollageImg(diccionarioImgRGB, pathImagenesBase, diccionarioPromRgb)
@@ -115,9 +115,8 @@ def waitSec(x):
 
 
 @ray.remote
-def obtenerRGB(x):
+def obtenerRGB(x,diccionarioPromedios,diccionarioImagenes):
     arr = np.array(x['imagen']) # Vamos a convertir la imagen en un arreglo
-        
     arr_mean = np.mean(arr, axis=(0,1))
 
     if(arr.ndim != 3):
@@ -143,7 +142,6 @@ def obtenerRGB(x):
         # plt.show()
         #x['imagen'].show()
     else:
-
         # print(f'[R={int(arr_mean[0])},  G={int(arr_mean[1])}, B={int(arr_mean[2])} ]')
         # El valor RGB
         
@@ -155,9 +153,21 @@ def obtenerRGB(x):
         diccionarioPromedios[rgb] = waitSec(listaRGB)
         diccionarioImagenes[rgb] = waitSec(x['imagen'])
 
+    return [rgb,listaRGB,x]
+    
     
 def valorRGBParalelizado(lista):
-    ray.get([obtenerRGB.remote(waitSec(x)) for x in lista])
+    diccionarioPromediosID = ray.put(diccionarioPromedios)
+    diccionarioImagenesID = ray.put(diccionarioImagenes)
+    task_ids = [obtenerRGB.remote(waitSec(x),diccionarioPromediosID,diccionarioImagenesID) for x in lista]
+    
+    while len(task_ids) > 0:
+        done_ids, task_ids = ray.wait(task_ids)
+        result = ray.get(done_ids[0])
+        diccionarioPromedios[result[0]] = waitSec(result[1])
+        diccionarioImagenes[result[0]] = waitSec(result[2]['imagen'])
+
+    return(diccionarioPromedios,diccionarioImagenes)
 
 
 def menuSeleccionImagenBase( listaImagenes ):
