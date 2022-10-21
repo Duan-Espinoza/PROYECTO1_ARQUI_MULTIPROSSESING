@@ -91,7 +91,8 @@ def cargaImagenes(pathCarpeta):
         return directorio
 
 @ray.remote
-def minimizarImagen(x,ruta,tamanio):
+def minimizarImagen(x,ruta,
+                    tamanio):
   im = Image.open(os.path.join(ruta, x),"r")
   im1 = {'imagen':im.resize(tamanio), 'nombre':x, 'promRGB':0}
   return im1
@@ -174,7 +175,7 @@ def valorRGB(lista):
 
 
 
-def menuSeleccionImagenBase( listaImagenes ):
+def menuSeleccionImagenBase(listaImagenes):
     print("*****Seleccione la Imagen a procesar******\n")
  
     for iterador, imagen in enumerate(listaImagenes):
@@ -187,7 +188,9 @@ def menuSeleccionImagenBase( listaImagenes ):
         print("Opción no válida\n")
         return menuSeleccionImagenBase(listaImagenes)
 
-    if ( opcion > 0 and opcion <= len(listaImagenes)):
+    if ((opcion > 0) and 
+        (opcion <= len(listaImagenes))):
+
         print(f'Imagen {opcion} seleccionada')
         return (listaImagenes[opcion - 1 ])
     else:
@@ -218,21 +221,24 @@ def buscarPixel(pixel, diccProm):
 
 
 @ray.remote
-def collageParalelo(pixel,x,height,background, diccIm,diccProm):
+def collageParalelo(pixel,x,
+                    height,background, 
+                    diccIm,diccProm):
     time.sleep(0.000001)
     print(x)
     for y in range(height):
             color = pixel[y, x]
             key = buscarPixel(color,diccProm)
             background.paste(diccIm[key], (0, y*newSize) )
-    # if x == 50:
-    #     background.show()
+
     return (x,background)
     time.sleep(0.000001)
 
 
 
-def realizarCollageImg(diccionarioImagenes, pathImagenesBase, diccionarioPromedio):
+def realizarCollageImg(diccionarioImagenes, 
+                        pathImagenesBase, 
+                        diccionarioPromedio):
     """
 
     Parameters
@@ -264,77 +270,11 @@ def realizarCollageImg(diccionarioImagenes, pathImagenesBase, diccionarioPromedi
 
     task_ids = [collageParalelo.remote(pixelId, x, heightId,imColId, diccImagenes,diccPromedio ) for x in range(imgWidth)]
     
-    # results = ray.get(task_ids)
-    # print(results)
-    # ray.get(task_ids[0])
     while len(task_ids) > 0:
         done_ids, task_ids = ray.wait(task_ids)
         result = ray.get(done_ids[0])
         im_bg.paste(result[1], (result[0]*newSize, 0))
 
-    # results = ray.get(task_ids)
-    # for index, col in enumerate(results):
-    #     im_bg.paste(col, (index*newSize, 0))
-
     return im_bg
-
-
-
-# def realizarCollageImg(pixels, imgBackground,diccionarioImagenes, diccionarioPromediosP, col, height):
-#     time.sleep(0.000001)
-#     # Va columan por columna, de arriba hacia abajo, empezando con la columna de la izquiera de la img
-
-#     for y in range(height):
-#         color = pixels[col, y]
-#         key = buscarPixel(color, diccionarioPromediosP)
-#         imgBackground.paste(diccionarioImagenes[key], (col*newSize, y*newSize) )
-#     time.sleep(0.000001)
-#     return 
-
-
-# def realizarCollageImagenParalelo( diccionarioImagenes, diccionarioPromediosP, pathImagenesBase,):
-
-#     print("Realizando el Collage Paralelo")
-#     imagenesBase = cargaImagenes(pathImagenesBase)
-#     imagenSeleccionada = menuSeleccionImagenBase(imagenesBase)
-
-#     img = Image.open(os.path.join(pathImagenesBase, imagenSeleccionada),"r")
-#     imgWidth, imgHeight = img.size
-#     imgBackground = Image.new(mode="RGB", size=(imgWidth*newSize, imgHeight*newSize))
-    
-#     time.sleep(0.000001)
-#     pixelsId = ray.put(np.asarray(img))
-#     imgBackgroundId = ray.put(imgBackground)
-#     diccionarioImagenesId = ray.put(diccionarioImagenes)
-#     diccionarioPromediosPId = ray.put(diccionarioPromediosP)
-    
-#     result_ids = [realizarCollageImg.remote(pixelsId,imgBackgroundId,diccionarioImagenesId, diccionarioPromediosPId, x, imgHeight ) for x in range(imgWidth)]
-#     #results = ray.get(result_ids)
-
-#     ray.shutdown()
-
-#     print("Holi")
-
-#     return imgBackground
-
-    
-
-
-
-    
-    
-
-
-
-
-
-# def tiempo():
-#   directorioImagenes = cargaImagenes(pathImagenes)
-
-#   inicio = time.time()
-#   cambioTamanioImg(directorioImagenes, pathImagenes)
-#   print("Duración Cambio tamaño de Imágenes: ", time.time() - inicio)
-
-# tiempo()
 
 
