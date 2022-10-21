@@ -10,7 +10,8 @@ pathImagenes = os.path.join(os.getcwd(), "imgs")
 pathImagenesBase = os.path.join(os.getcwd(), "Imagenes_base")
 pathResultado = os.path.join(os.getcwd(), "resultado")
 newSize = 50
-
+diccionarioImagenes = {}
+diccionarioPromedios = {}
 
 def Paralelo():
     inicio = time.time()
@@ -31,7 +32,6 @@ def Paralelo():
     inicio = time.time()
     result = realizarCollageImg(diccionarioImgRGB, pathImagenesBase, diccionarioPromRgb)
     print("Duración Collage: ", time.time() - inicio)
-
 
     pathREsultado = os.path.join(os.getcwd(), "resultado/resultado.jpg") 
     print(pathREsultado)
@@ -105,8 +105,6 @@ def cambioTamanioImgParalelo(directorio,ruta):
     
     return listaImagenes
 
-diccionarioImagenes = {}
-diccionarioPromedios = {}
 
 
 def waitSec(x):
