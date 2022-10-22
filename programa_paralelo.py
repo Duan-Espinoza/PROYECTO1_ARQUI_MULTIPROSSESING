@@ -351,6 +351,7 @@ def collageParalelo(pixel,columna,
             keyMenor = ""
             promMenor = 0
 
+            #Busca el pixel dentro del diccionario de Promedios para seleccionar la imagen más parecida al RGB del Pixel 
             for key, value  in diccProm.items():
                 prom = (abs(value[0] - color[0]) + abs(value[1] - color[1]) + abs(value[2] - color[2])) // 3
 
