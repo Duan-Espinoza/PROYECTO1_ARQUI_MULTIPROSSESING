@@ -208,6 +208,7 @@ def menuSeleccionImagenBase( listaImagenes ):
     El nombre de la imagen seleccioanda
        
     """
+    
     print("*****Seleccione la Imagen Base ******\n")
 
     for iterador, imagen in enumerate(listaImagenes):
