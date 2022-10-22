@@ -22,8 +22,8 @@ print(ray.available_resources())
 import os
 from PIL import Image
 import numpy as np
-import matplotlib.pyplot as plt
 import time
+
 
 pathImagenes = os.path.join(os.getcwd(), "imgs")
 pathImagenesBase = os.path.join(os.getcwd(), "Imagenes_base")

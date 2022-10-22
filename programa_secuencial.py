@@ -18,9 +18,7 @@ II Semestre 2022
 
 import os
 from PIL import Image
-import multiprocessing as mp
 import numpy as np
-import matplotlib.pyplot as plt
 import time
 
 pathImagenes = os.path.join(os.getcwd(), "imgs")
