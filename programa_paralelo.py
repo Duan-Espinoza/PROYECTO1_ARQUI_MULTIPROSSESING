@@ -15,13 +15,14 @@ Estudiantes:
 
 II Semestre 2022
 """
+import ray
+ray.init()
 
 import os
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-import ray
 
 pathImagenes = os.path.join(os.getcwd(), "imgs")
 pathImagenesBase = os.path.join(os.getcwd(), "Imagenes_base")
@@ -62,7 +63,7 @@ def paralelo():
 
     tiempoTotal = tiempoReduccionImagenes + tiempoCalculoPromedios + tiempoCollage
     print(f'\n\nTiempos para ejecución Paralela: \n - Redu Ima: {tiempoReduccionImagenes} \n - Prom RGB: {tiempoCalculoPromedios} \n - Proc Col: {tiempoCollage} \n - Total   : {tiempoTotal}')
-
+    ray.shutdown()
    
 
 def waitSec():
@@ -144,6 +145,7 @@ def minimizarImagen(nombreImagen,pathCarpetaImagen):
     tamanioImagen = (tamanioPixel, tamanioPixel)
     nuevaImagen = {'imagen':imagen.resize(tamanioImagen), 'nombre':nombreImagen, 'promRGB':0}
     return nuevaImagen
+
 
 def cambioTamanioImgParalelo(listaNombresArchivos,pathCarpetaArchivos):
     """Cambia el tamaño de las imagenes 
@@ -272,7 +274,7 @@ def menuSeleccionImagenBase( listaNombresImagenes ):
         print("Opción no válida")
         return menuSeleccionImagenBase(listaNombresImagenes)
    
-
+@ray.remote
 def buscarPixel(pixel, diccProm):
     """Busca el pixel dentro del diccionario de Promedios para seleccionar la imagen más parecida al RGB del Pixel 
 
@@ -346,8 +348,22 @@ def collageParalelo(pixel,columna,
     time.sleep(0.000001)
     for y in range(height):
             color = pixel[y, columna]
-            key = buscarPixel(color,diccProm)
-            imagenesColumna.append(  diccIm[key] )
+
+            keyMenor = ""
+            promMenor = 0
+
+            for key, value  in diccProm.items():
+                prom = (abs(value[0] - color[0]) + abs(value[1] - color[1]) + abs(value[2] - color[2])) // 3
+
+                if (keyMenor == ""):
+                    keyMenor = key
+                    promMenor = prom
+
+                if prom < promMenor:
+                    promMenor = prom 
+                    keyMenor = key
+
+            imagenesColumna.append(  diccIm[keyMenor] )
 
     return (columna,imagenesColumna)
 
