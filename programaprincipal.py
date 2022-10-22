@@ -38,12 +38,13 @@ def menuPrincipal():
         print("Opción no válida\n")
         return menuPrincipal()
     if opcion==1:
-        return secuencial.Secuencial()
+        secuencial.secuencial()
+        pass
     if opcion==2:
-        return paralelo.paralelo()
+        paralelo.paralelo()
         pass
     if opcion==3:
-        pass
+        return 
     else:
         print("Opción no válida")
         return menuPrincipal()

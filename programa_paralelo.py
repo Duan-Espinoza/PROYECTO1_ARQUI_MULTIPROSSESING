@@ -1,6 +1,22 @@
+"""
+Instituto Tecnológico de Costa Rica
+Escuela de Ingeniería en Computación - Sede San Carlos
+Curso de Arquitectura de Computadoras 
+
+Proyecto 1 - Multiprocesamiento
+Profesor: Luis Diego Gómez Rodríguez
+
+Código de la Solucion Paralela
+
+Estudiantes:
+    Josué Chaves Araya 
+    Duan Espinosa Olivares
+    Valentín Tissera Doncini 
+
+II Semestre 2022
+"""
 
 import os
-from turtle import width
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
@@ -24,19 +40,20 @@ def paralelo():
     Guarda una Imagen Collage en la carpeta "resultado"
 
     """
-    
+
     #Carga  los nombres de las imágenes dentro de la carptea de imgs
     fileNamesImagenes  = cargarFileNames(pathImagenes)
-
-    print("Realizando el Collage Paralelo")
+    
+    #Cambio de Tamaño
+    print("Resize de Imágenes - Paralelo")
     imagenesModificadas, tiempoReduccionImagenes = cambioTamanioImgParalelo(fileNamesImagenes, pathImagenes)
-
+    
+    #Cálculo del Promedio
+    print("Promedios RGB - Paralelo")
     diccionarioPromRgb, diccionarioImgRGB, tiempoCalculoPromedios = valorRGBParalelizado(imagenesModificadas)
 
-    # print("diccionario RGB: "+(str(len(diccionarioImgRGB)-1)))
-
-    print("Realizando el Collage Paralelo")
-
+    #Creación del collage
+    print("Collage - Paralelo")
     collage, tiempoCollage = realizarCollageImg(diccionarioImgRGB, pathImagenesBase, diccionarioPromRgb)
 
     #Guardar la Imagen
@@ -44,8 +61,9 @@ def paralelo():
     collage.save( pathCollage )
 
     tiempoTotal = tiempoReduccionImagenes + tiempoCalculoPromedios + tiempoCollage
-    print(f'Tiempos para esta ejecución: \n - Redu Ima: {tiempoReduccionImagenes} \n - Prom RGB: {tiempoCalculoPromedios} \n - Proc Col: {tiempoCollage} \n - Total   : {tiempoTotal}')
+    print(f'\n\nTiempos para ejecución Paralela: \n - Redu Ima: {tiempoReduccionImagenes} \n - Prom RGB: {tiempoCalculoPromedios} \n - Proc Col: {tiempoCollage} \n - Total   : {tiempoTotal}')
 
+   
 
 def waitSec():
     time.sleep(0.0001)
@@ -78,7 +96,7 @@ def cargarFileNames(pathCarpeta):
             if os.path.isfile(os.path.join(pathCarpeta, archivo)) and archivo.endswith('.jpg'):
                 listaFilenames.append(archivo)
                 
-        print(f'Hay {len(listaFilenames)} imagenes en la carpeta')
+        # print(f'Hay {len(listaFilenames)} imagenes en la carpeta')
         
         return listaFilenames
 
@@ -99,7 +117,7 @@ def verificarRuta(ruta):
         False: Si no la encuentra.
 
     """
-    print("------ Verificando Path")
+    # print("------ Verificando Path")
 
     if os.path.exists(ruta):
         return True
@@ -137,7 +155,7 @@ def cambioTamanioImgParalelo(listaNombresArchivos,pathCarpetaArchivos):
     ruta : str
         Ruta la cual se va a verificar su validez.
     """
-    print("------ Cambiando el size de las imagenes")
+    # print("------ Cambiando el size de las imagenes")
     
     inicioReduccionImagenes = time.time()    
     listaImagenesTamanioReducido = ray.get([minimizarImagen.remote(archivo,pathCarpetaArchivos) for archivo in listaNombresArchivos])
@@ -352,9 +370,9 @@ def realizarCollageImg(diccionarioImagenes,
 
     Return
     ----------
-    Objeto de tiupo imagen con el collage de la imagen base creada en base a las imagenes de tamano reducido 
+    Objeto de tipo imagen con el collage de la imagen base creada en base a las imagenes de tamano reducido 
     """
-    print("------ Realizando el Collage")
+    # print("------ Realizando el Collage")
 
     nombresImagenesBase = cargarFileNames(pathImagenesBase)
     imagenSeleccionada = menuSeleccionImagenBase(nombresImagenesBase)
@@ -384,11 +402,12 @@ def realizarCollageImg(diccionarioImagenes,
         result = ray.get(done_ids[0])
         listaColumnas[result[0]] = result[1]
     
+    tiempoCollage = time.time() - inicioCollage
+
     for col in range(imgWidth):
         for row in range(imgHeight):
             canvasCollage.paste(listaColumnas[col][row] ,(col*tamanioPixel, row*tamanioPixel))
     
-    tiempoCollage = time.time() - inicioCollage
 
     return (canvasCollage, tiempoCollage)
 
