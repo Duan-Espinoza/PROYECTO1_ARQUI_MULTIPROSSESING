@@ -16,7 +16,8 @@ Estudiantes:
 II Semestre 2022
 """
 import ray
-ray.init()
+ray.init(num_cpus = 4)
+print(ray.available_resources())
 
 import os
 from PIL import Image
@@ -63,7 +64,6 @@ def paralelo():
 
     tiempoTotal = tiempoReduccionImagenes + tiempoCalculoPromedios + tiempoCollage
     print(f'\n\nTiempos para ejecución Paralela: \n - Redu Ima: {tiempoReduccionImagenes} \n - Prom RGB: {tiempoCalculoPromedios} \n - Proc Col: {tiempoCollage} \n - Total   : {tiempoTotal}')
-    ray.shutdown()
    
 
 def waitSec():
