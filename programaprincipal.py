@@ -40,7 +40,7 @@ def menuPrincipal():
     if opcion==1:
         return secuencial.Secuencial()
     if opcion==2:
-        return paralelo.Paralelo()
+        return paralelo.paralelo()
         pass
     if opcion==3:
         pass
